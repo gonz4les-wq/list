@@ -4,9 +4,11 @@ A clean, installable iPhone web app with three tabs:
 
 | Tab | What it does |
 | --- | --- |
-| **📝 To-Do** (left) | A typical to-do list — add tasks, tick them off, delete. |
-| **📅 Calendar** (middle) | A calendar starting **30 May 2026**. Each day up to today is open for notes. Tap a day to write what you want to remember and look it back up any time. Days with a note show a dot. |
+| **📝 To-Do** (left) | A typical to-do list — add tasks, tick them off, delete. Optionally assign a task to **a certain day**; dated tasks show a badge (red if overdue, green for today) and also appear in the calendar. |
+| **📅 Calendar** (middle) | A calendar that **starts the day you first open the app** and grows every day. Tap any day to write a note and to see/add the tasks scheduled for it. Dots mark days with a note (blue) or a task (green). A **search bar** finds any note by text, with the match highlighted. Tap the month title to jump back to today. |
 | **🛒 Shopping** (right) | Create multiple lists (profiles), add items, and tap **To buy / ✓ Bought** on the right of each item. |
+
+Each tab header shows a live summary (e.g. *“3 open · 2 done”*).
 
 Everything is saved **locally on the device** (localStorage) and works **offline** thanks to a service worker — no account, no server.
 

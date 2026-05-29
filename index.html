@@ -3,14 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Theme colour matches the app background so there is no white bar -->
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+
   <title>My Lists</title>
 
   <!-- PWA / iOS -->
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <!-- translucent status bar: web content flows under it, no white strip -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="My Lists" />
   <link rel="apple-touch-icon" href="icons/icon-180.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
@@ -25,13 +30,17 @@
     <section id="screen-todo" class="screen is-active">
       <header class="app-header">
         <h1>To-Do</h1>
-        <p class="app-subtitle">Stay on top of your day</p>
+        <p class="app-subtitle" id="todo-subtitle">Stay on top of your day</p>
       </header>
 
       <form id="todo-form" class="add-row" autocomplete="off">
         <input id="todo-input" type="text" placeholder="Add a task…" maxlength="200" />
         <button type="submit" class="add-btn" aria-label="Add task">+</button>
       </form>
+      <label class="day-pick">
+        <span class="day-pick-label">📅 On a certain day <em>(optional)</em></span>
+        <input id="todo-day" type="date" />
+      </label>
 
       <ul id="todo-list" class="list"></ul>
       <div id="todo-empty" class="empty-state">
@@ -44,31 +53,44 @@
     <section id="screen-calendar" class="screen">
       <header class="app-header">
         <h1>Calendar</h1>
-        <p class="app-subtitle">A note for every day</p>
+        <p class="app-subtitle" id="cal-subtitle">A note for every day</p>
       </header>
 
-      <div class="cal-nav">
-        <button id="cal-prev" class="cal-nav-btn" aria-label="Previous month">‹</button>
-        <div id="cal-title" class="cal-title">May 2026</div>
-        <button id="cal-next" class="cal-nav-btn" aria-label="Next month">›</button>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input id="cal-search" type="search" placeholder="Search your notes…" />
+        <button id="cal-search-clear" class="search-clear" aria-label="Clear search" hidden>✕</button>
       </div>
 
-      <div class="cal-weekdays">
-        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-      </div>
-      <div id="cal-grid" class="cal-grid"></div>
+      <!-- Calendar view -->
+      <div id="cal-view">
+        <div class="cal-nav">
+          <button id="cal-prev" class="cal-nav-btn" aria-label="Previous month">‹</button>
+          <button id="cal-title" class="cal-title" aria-label="Jump to today">May 2026</button>
+          <button id="cal-next" class="cal-nav-btn" aria-label="Next month">›</button>
+        </div>
 
-      <div class="cal-legend">
-        <span class="legend-item"><span class="legend-dot legend-today"></span>Today</span>
-        <span class="legend-item"><span class="legend-dot legend-has-note"></span>Has note</span>
+        <div class="cal-weekdays">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+        <div id="cal-grid" class="cal-grid"></div>
+
+        <div class="cal-legend">
+          <span class="legend-item"><span class="legend-dot legend-today"></span>Today</span>
+          <span class="legend-item"><span class="legend-dot legend-note"></span>Note</span>
+          <span class="legend-item"><span class="legend-dot legend-task"></span>Task</span>
+        </div>
       </div>
+
+      <!-- Search results view -->
+      <div id="cal-results" class="cal-results" hidden></div>
     </section>
 
     <!-- ---------- SHOPPING ---------- -->
     <section id="screen-shopping" class="screen">
       <header class="app-header">
         <h1>Shopping</h1>
-        <p class="app-subtitle">Lists for every occasion</p>
+        <p class="app-subtitle" id="shop-subtitle">Lists for every occasion</p>
       </header>
 
       <div class="profile-bar">
@@ -107,7 +129,7 @@
     </button>
   </nav>
 
-  <!-- ===== Day note modal ===== -->
+  <!-- ===== Day modal (note + tasks for that day) ===== -->
   <div id="day-modal" class="modal" hidden>
     <div class="modal-backdrop" data-close></div>
     <div class="modal-card" role="dialog" aria-modal="true">
@@ -115,14 +137,24 @@
         <h2 id="day-modal-title">Day</h2>
         <button class="modal-close" data-close aria-label="Close">✕</button>
       </div>
+
+      <div class="day-section-label">Note</div>
       <textarea id="day-note" placeholder="Write what you want to remember about this day…"></textarea>
+
+      <div class="day-section-label">Tasks on this day</div>
+      <ul id="day-tasks" class="list day-tasks"></ul>
+      <form id="day-task-form" class="add-row small" autocomplete="off">
+        <input id="day-task-input" type="text" placeholder="Add a task for this day…" maxlength="200" />
+        <button type="submit" class="add-btn" aria-label="Add task">+</button>
+      </form>
+
       <div class="modal-actions">
-        <button id="day-save" class="btn-primary">Save</button>
+        <button id="day-save" class="btn-primary">Save &amp; close</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== Generic prompt modal (new list name) ===== -->
+  <!-- ===== New list name modal ===== -->
   <div id="name-modal" class="modal" hidden>
     <div class="modal-backdrop" data-close></div>
     <div class="modal-card" role="dialog" aria-modal="true">

@@ -1,5 +1,5 @@
 /* Simple offline-first service worker for My Lists */
-const CACHE = 'mylists-v1';
+const CACHE = 'mylists-v2';
 const ASSETS = [
   './',
   './index.html',
