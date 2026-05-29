@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>My Lists</title>
+
+  <!-- PWA / iOS -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="My Lists" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===== Screens ===== -->
+  <main id="screens">
+
+    <!-- ---------- TODO ---------- -->
+    <section id="screen-todo" class="screen is-active">
+      <header class="app-header">
+        <h1>To-Do</h1>
+        <p class="app-subtitle">Stay on top of your day</p>
+      </header>
+
+      <form id="todo-form" class="add-row" autocomplete="off">
+        <input id="todo-input" type="text" placeholder="Add a task…" maxlength="200" />
+        <button type="submit" class="add-btn" aria-label="Add task">+</button>
+      </form>
+
+      <ul id="todo-list" class="list"></ul>
+      <div id="todo-empty" class="empty-state">
+        <div class="empty-emoji">✅</div>
+        <p>No tasks yet.<br />Add your first one above.</p>
+      </div>
+    </section>
+
+    <!-- ---------- CALENDAR ---------- -->
+    <section id="screen-calendar" class="screen">
+      <header class="app-header">
+        <h1>Calendar</h1>
+        <p class="app-subtitle">A note for every day</p>
+      </header>
+
+      <div class="cal-nav">
+        <button id="cal-prev" class="cal-nav-btn" aria-label="Previous month">‹</button>
+        <div id="cal-title" class="cal-title">May 2026</div>
+        <button id="cal-next" class="cal-nav-btn" aria-label="Next month">›</button>
+      </div>
+
+      <div class="cal-weekdays">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+      <div id="cal-grid" class="cal-grid"></div>
+
+      <div class="cal-legend">
+        <span class="legend-item"><span class="legend-dot legend-today"></span>Today</span>
+        <span class="legend-item"><span class="legend-dot legend-has-note"></span>Has note</span>
+      </div>
+    </section>
+
+    <!-- ---------- SHOPPING ---------- -->
+    <section id="screen-shopping" class="screen">
+      <header class="app-header">
+        <h1>Shopping</h1>
+        <p class="app-subtitle">Lists for every occasion</p>
+      </header>
+
+      <div class="profile-bar">
+        <div id="profile-tabs" class="profile-tabs"></div>
+        <button id="profile-add" class="profile-add" aria-label="New list">+</button>
+      </div>
+
+      <form id="shop-form" class="add-row" autocomplete="off">
+        <input id="shop-input" type="text" placeholder="Add an item…" maxlength="200" />
+        <button type="submit" class="add-btn" aria-label="Add item">+</button>
+      </form>
+
+      <ul id="shop-list" class="list"></ul>
+      <div id="shop-empty" class="empty-state">
+        <div class="empty-emoji">🛒</div>
+        <p>This list is empty.<br />Add something to buy.</p>
+      </div>
+
+      <button id="profile-delete" class="profile-delete">Delete this list</button>
+    </section>
+  </main>
+
+  <!-- ===== Bottom Tab Bar ===== -->
+  <nav id="tabbar" class="tabbar">
+    <button class="tab is-active" data-screen="screen-todo">
+      <span class="tab-icon">📝</span>
+      <span class="tab-label">To-Do</span>
+    </button>
+    <button class="tab" data-screen="screen-calendar">
+      <span class="tab-icon">📅</span>
+      <span class="tab-label">Calendar</span>
+    </button>
+    <button class="tab" data-screen="screen-shopping">
+      <span class="tab-icon">🛒</span>
+      <span class="tab-label">Shopping</span>
+    </button>
+  </nav>
+
+  <!-- ===== Day note modal ===== -->
+  <div id="day-modal" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2 id="day-modal-title">Day</h2>
+        <button class="modal-close" data-close aria-label="Close">✕</button>
+      </div>
+      <textarea id="day-note" placeholder="Write what you want to remember about this day…"></textarea>
+      <div class="modal-actions">
+        <button id="day-save" class="btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Generic prompt modal (new list name) ===== -->
+  <div id="name-modal" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2 id="name-modal-title">New list</h2>
+        <button class="modal-close" data-close aria-label="Close">✕</button>
+      </div>
+      <input id="name-input" type="text" placeholder="List name…" maxlength="40" />
+      <div class="modal-actions">
+        <button id="name-save" class="btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
